@@ -140,8 +140,8 @@ padding:11px 14px;background:rgba(255,255,255,.92);backdrop-filter:blur(18px);-w
 .placeholder p{color:var(--mut);font-size:14px;max-width:320px;margin:0 auto}
 .chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:18px}
 .chip{font-size:12px;font-weight:600;color:var(--ink2);background:var(--card);border:1px solid var(--line);padding:7px 13px;border-radius:999px;box-shadow:var(--shsm)}
-.overlay{position:fixed;inset:0;z-index:60;display:none;flex-direction:column;background:rgba(28,27,25,.55);backdrop-filter:blur(4px)}
-.overlay.show{display:flex;animation:fade .25s ease}
+.overlay{position:fixed;inset:0;z-index:60;display:none;flex-direction:column;background:rgba(28,27,25,.55);backdrop-filter:blur(4px);opacity:1}
+.overlay.show{display:flex;opacity:1}
 .ov-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:calc(env(safe-area-inset-top) + 12px) 16px 12px;color:#fff}
 .ov-bar .t{font-weight:700;font-size:15px}
 .ov-stage{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;padding:0 14px 24px;display:flex;justify-content:center}
@@ -237,9 +237,12 @@ padding:11px 14px;background:rgba(255,255,255,.92);backdrop-filter:blur(18px);-w
 .pi tr.spc td{border-left:1px solid #222;border-right:1px solid #222;border-top:0;border-bottom:0;height:14px;padding:0}
 .pi .tot .lab{text-align:right;font-weight:700}.pi .tot .val{text-align:right;white-space:nowrap}
 .pi .grand td{background:#efece6;font-weight:800;font-size:14px}
-.pi-accent{height:3px;background:#9C6A4E;width:64px;margin:18px 0 0}
+.pi tr.warr td{font-weight:700}
+.pi-accent{height:3px;background:#9C6A4E;width:64px;margin:18px 0 14px}
 .pi-note{margin-top:14px;font-size:10.5px;color:#8a867d;font-style:italic}
-.pi-foot{margin-top:auto;padding-top:22px;text-align:center;font-size:10px;color:#999}
+.pi-bottom{margin-top:auto}          /* pushes payment / signatures to the page bottom */
+.pi-payblock{margin-bottom:12px}
+.pi-foot{padding-top:14px;text-align:center;font-size:10px;color:#999}
 /* page 2 */
 .pi-p2head{display:flex;justify-content:space-between;align-items:baseline;border-bottom:2px solid #222;padding-bottom:10px;margin-bottom:20px}
 .pi-p2head .l b{font-size:14px}.pi-p2head .l span{display:block;font-size:11px;color:#666;margin-top:2px}
@@ -248,22 +251,33 @@ padding:11px 14px;background:rgba(255,255,255,.92);backdrop-filter:blur(18px);-w
 .pi-block h4{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#444;border-bottom:1px solid #ccc;padding-bottom:4px;margin-bottom:8px}
 .pi-warr .wrow{display:flex;justify-content:space-between;font-size:12px;padding:3px 0}
 .pi-warr .wrow b{color:#1b1b1b}
-.pi-pay{font-size:var(--linefs);line-height:1.7;white-space:pre-line;word-break:break-word;overflow-wrap:break-word}
+.pi-pay{font-size:var(--linefs);line-height:1.7;white-space:pre-line;word-break:break-word;overflow-wrap:break-word;margin-bottom:16px}
 .pi-tc .body{font-size:9.5px;color:#333;line-height:1.55;white-space:pre-line;word-break:break-word;overflow-wrap:break-word}
-.pi-thanks{text-align:center;font-weight:700;letter-spacing:.04em;margin:26px 0 30px;font-size:13px}
+.pi-thanks{text-align:center;font-weight:700;letter-spacing:.04em;margin:22px 0 26px;font-size:13px}
 .pi-sigs{display:flex;justify-content:space-between;gap:46px;font-size:12px}
-.pi-sig{flex:1}.pi-sig .sp{height:40px}
-.pi-sig .ln{border-top:1px solid #222;padding-top:5px;display:flex;justify-content:space-between}
-.pi-sig .ln span:last-child{color:#888}
-.pi-block,.pi-sigs{page-break-inside:avoid}
-.pi-p2{page-break-before:always}
-/* live preview: render each .pi-page as its own A4 sheet */
-.ov-paper .pi-page{width:794px;min-height:1123px;margin:0 auto 16px;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.pi-sig{flex:1}.pi-sig .sp{height:46px}
+.pi-sig .ln{border-top:1px solid #222}
+.pi-sig .cap{padding-top:6px;display:flex;flex-direction:column;gap:2px}
+.pi-sig .cap.tr{align-items:flex-end;text-align:right}
+.pi-sig .cap b{font-size:12px}.pi-sig .cap span{font-size:10.5px;color:#888}
+.pi-block,.pi-sigs,.pi-warr{page-break-inside:avoid}
+/* live preview: render each .pi-page as its own A4 sheet (fixed height so the
+   bottom-anchored payment / signatures sit correctly) */
+.ov-paper .pi-page{width:794px;height:1123px;overflow:hidden;margin:0 auto 16px;box-shadow:0 20px 60px rgba(0,0,0,.4)}
 .ov-paper .pi-page:last-child{margin-bottom:0}
-/* PDF capture: each page fills most of an A4 sheet; the forced break before
-   .pi-p2 keeps the export to exactly two pages (min-height < page height avoids
-   an html2pdf slicing round-off that would add a blank third page). */
-.pdfmode .pi-page{width:794px;min-height:1080px}
+/* PDF capture: min-height (slightly under a full A4) so bottom anchoring works AND
+   html2pdf's slicing never rounds up into a blank third page; the forced break
+   before .pi-p2 keeps it to exactly two pages. */
+.pdfmode .pi-page{width:794px;min-height:1080px;overflow:hidden}
+/* PRINT: block flow (NOT flex) so page engines paginate cleanly with no blank
+   pages; a single forced break before page 2 gives exactly two pages. */
+@media print{
+  .pi-page{display:block;height:auto;min-height:0;padding:0;overflow:visible}
+  .pi-bottom{margin-top:20px}
+  .pi-p2{page-break-before:always;break-before:page}
+  .pi-note{display:none}
+  .pi-top,.pi-bill,.pi table,.pi-block,.pi-sigs{page-break-inside:avoid}
+}
 </style>
 </head>
 <body>
@@ -1177,25 +1191,21 @@ function renderInvoiceHTML(){
   const den=inv.density||'normal';
   const sub=inv.items.reduce((a,it)=>a+num(it.a),0);
   const gst=inv.gstOn?sub*(inv.gstRate||0)/100:0,tot=sub+gst;
-  const rows=inv.items.map(it=>{
+  let rows=inv.items.map(it=>{
     const t=it.t||'item';
     if(t==='section')return `<tr class="sec"><td colspan="2">${esc(it.d)}</td></tr>`;
     if(t==='spacer')return `<tr class="spc"><td colspan="2"></td></tr>`;
     return `<tr><td>${esc(it.d)}</td><td class="amt">${amtCell(it.a)}</td></tr>`;
   }).join("");
+  if(inv.warrOn){
+    rows+=`<tr class="warr"><td>${esc(inv.warrDur)} Warranty (${esc(inv.warrCov)})</td><td class="amt"></td></tr>`;
+    if(inv.warrStart)rows+=`<tr><td>Start Date : ${esc(inv.warrStart)}</td><td class="amt"></td></tr>`;
+  }
   const coLines=[s.uen?("GST/UEN: "+esc(s.uen)):"",esc(s.phone),esc(s.email),esc(s.addr)].filter(Boolean).join("<br>");
   const billLines=[esc(inv.name),esc(inv.phone),esc(inv.addr)].filter(Boolean).map(x=>`<div>${x}</div>`).join("")||"<div></div>";
   const gstRow=inv.gstOn?`<tr class="tot"><td class="lab">GST ${inv.gstRate||0}%</td><td class="val">${money(gst)}</td></tr>`:"";
-  /* ── Page 2 blocks ── */
-  let warrBlock="";
-  if(inv.warrOn){
-    warrBlock=`<div class="pi-block pi-warr"><h4>Warranty</h4>
-      <div class="wrow"><b>${esc(inv.warrDur)} Warranty</b><span>${esc(inv.warrCov)}</span></div>
-      ${inv.warrStart?`<div class="wrow"><span>Start date</span><span>${esc(inv.warrStart)}</span></div>`:""}</div>`;
-  }
-  const payBlock=inv.pay?`<div class="pi-block"><h4>Payment Details</h4><div class="pi-pay">${esc(inv.pay)}</div></div>`:"";
+  const payBlock=inv.pay?`<div class="pi-pay">${esc(inv.pay)}</div>`:"";
   const tcBlock=inv.tc?`<div class="pi-block pi-tc"><h4>Terms &amp; Conditions</h4><div class="body">${esc(inv.tc)}</div></div>`:"";
-  const p2head=`<div class="pi-p2head"><div class="l"><b>${esc(s.co)}</b><span>Invoice ${esc(inv.no)}${inv.name?(" &middot; "+esc(inv.name)):""}</span></div><div class="r">${esc(inv.date)}</div></div>`;
   return `<div class="pi den-${den}">
     <section class="pi-page pi-p1">
       <div class="pi-top">
@@ -1215,19 +1225,16 @@ function renderInvoiceHTML(){
           <tr class="tot grand"><td class="lab">TOTAL</td><td class="val">${money(tot)}</td></tr>
         </tbody>
       </table>
-      <div class="pi-accent"></div>
-      <div class="pi-note">Warranty, payment details and terms &amp; conditions continue on page 2.</div>
       <div class="pi-foot">Page 1 of 2</div>
     </section>
     <section class="pi-page pi-p2">
-      ${p2head}
-      ${warrBlock}
+      <div class="pi-accent"></div>
       ${payBlock}
       ${tcBlock}
       <div class="pi-thanks">THANK YOU FOR YOUR BUSINESS!</div>
       <div class="pi-sigs">
-        <div class="pi-sig"><div class="sp"></div><div class="ln"><span>SG MICRO CEMENT</span><span></span></div></div>
-        <div class="pi-sig"><div class="sp"></div><div class="ln"><span></span><span>CLIENT</span></div></div>
+        <div class="pi-sig"><div class="sp"></div><div class="ln"></div><div class="cap"><b>${esc(s.co)}</b><span>Agent in charge</span></div></div>
+        <div class="pi-sig"><div class="sp"></div><div class="ln"></div><div class="cap tr"><b>Customer</b><span>Signature &amp; date</span></div></div>
       </div>
       <div class="pi-foot">Page 2 of 2</div>
     </section>
@@ -1337,13 +1344,13 @@ window.applyPreset=applyPreset;
 /* ── v1.07: Print in new window (removes file:// URL from footer) ── */
 /* Reuse the exact same invoice styles as the live preview (single source of truth),
    then add print-only rules so the pop-up window paginates as a clean 2-page A4 doc. */
-const _PI_CSS=((document.getElementById('piCss')||{}).textContent||'')
-  +`\n@media print{.pi-page{padding:0!important;min-height:auto!important}.pi-p2{page-break-before:always}}`;
+const _PI_CSS=((document.getElementById('piCss')||{}).textContent||'');
 
 function renderInvoiceDocument(){
   return '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Invoice</title><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;background:#fff;color:#222}'+_PI_CSS+'@page{size:A4;margin:13mm}</style></head><body>'+renderInvoiceHTML()+'</body></html>';
 }
 function invPrint(){
+  if(typeof invCommitQuiet==="function")invCommitQuiet();   // auto-save to History on print/export
   const html=renderInvoiceDocument();
   const w=window.open('','_blank');
   if(!w){alert('Pop-up blocked — please allow pop-ups for this page, then try again.');return;}
@@ -1357,26 +1364,44 @@ function _pdfFilename(){
   return no+(nm?("-"+nm):"")+".pdf";}
 function invDownloadPDF(){
   if(typeof html2pdf==="undefined"){toast("PDF engine unavailable — opening Print instead");invPrint();return;}
+  invCommitQuiet();                       // auto-save this invoice to History on export
   const holder=document.createElement("div");
   holder.style.cssText="position:fixed;left:-10000px;top:0;background:#fff";
   holder.innerHTML=renderInvoiceHTML();
   const pi=holder.firstElementChild;pi.classList.add("pdfmode");
   document.body.appendChild(holder);
   const btns=[...document.querySelectorAll('[onclick*="invDownloadPDF"]')];btns.forEach(b=>b.disabled=true);
+  const done=()=>{holder.remove();btns.forEach(b=>b.disabled=false);};
+  const fname=_pdfFilename();
   toast("Preparing PDF…");
   html2pdf().set({
     margin:0,
-    filename:_pdfFilename(),
+    filename:fname,
     image:{type:"jpeg",quality:0.98},
     html2canvas:{scale:2,useCORS:true,backgroundColor:"#ffffff",windowWidth:794},
     jsPDF:{unit:"px",format:[794,1122],orientation:"portrait"},
     pagebreak:{mode:["css","legacy"],before:".pi-p2"}
-  }).from(pi).save().then(()=>{
-    holder.remove();btns.forEach(b=>b.disabled=false);
-    toast("PDF downloaded ✓","Home",closePreviewHome);
+  }).from(pi).outputPdf("blob").then(async(blob)=>{
+    done();
+    // Phones: open the native share sheet (WhatsApp, Mail, AirDrop, Save to Files…)
+    try{
+      const file=new File([blob],fname,{type:"application/pdf"});
+      if(navigator.canShare&&navigator.canShare({files:[file]})){
+        await navigator.share({files:[file],title:fname});
+        toast("Shared ✓ · Saved to history","Home",closePreviewHome);
+        return;
+      }
+    }catch(e){
+      if(e&&e.name==="AbortError"){toast("Saved to history ✓","Home",closePreviewHome);return;}
+      /* share not allowed → fall through to download */
+    }
+    // Desktop / fallback: download the file
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement("a");a.href=url;a.download=fname;document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),4000);
+    toast("PDF exported ✓ · Saved to history","Home",closePreviewHome);
   }).catch(err=>{
-    holder.remove();btns.forEach(b=>b.disabled=false);
-    console.error("PDF export failed",err);toast("PDF failed — try Print instead");
+    done();console.error("PDF export failed",err);toast("PDF failed — try Print instead");
   });
 }
 window.invDownloadPDF=invDownloadPDF;
@@ -1389,15 +1414,16 @@ function recSaveAll(l){store.set(userKey(LISTKEY),l);}
 function money2(n){return "$"+(isFinite(n)?n:0).toLocaleString("en-SG",{minimumFractionDigits:2,maximumFractionDigits:2});}
 function fmtDate(ts){try{return new Date(ts).toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"});}catch(e){return "";}}
 function invTotalOf(d){const sub=d.items.reduce((a,it)=>a+num(it.a),0);return sub+(d.gstOn?sub*(d.gstRate||0)/100:0);}
-function invCommit(){
+function invCommitQuiet(){
   const list=recList();const total=invTotalOf(inv);
   if(!inv.rid)inv.rid="r"+Date.now();
   const rec={rid:inv.rid,no:inv.no,date:inv.date,name:inv.name,phone:inv.phone,addr:inv.addr,total:total,companyId:inv.companyId||getActiveCo(),savedAt:Date.now(),data:JSON.parse(JSON.stringify(inv))};
   const idx=list.findIndex(r=>r.rid===rec.rid);
   if(idx>=0)list[idx]=rec;else list.unshift(rec);
-  recSaveAll(list);invSave();toast(idx>=0?"Invoice updated \u2713":"Saved to history \u2713");
+  recSaveAll(list);invSave();return idx>=0;
 }
-window.invCommit=invCommit;
+function invCommit(){const existed=invCommitQuiet();toast(existed?"Invoice updated \u2713":"Saved to history \u2713");}
+window.invCommit=invCommit;window.invCommitQuiet=invCommitQuiet;
 function invOpen(rid){const r=recList().find(x=>x.rid===rid);if(!r)return;inv=JSON.parse(JSON.stringify(r.data));inv.rid=r.rid;invSave();invRenderItems();invBind();go('invoice');}
 window.invOpen=invOpen;
 function recDelete(rid){if(!confirm("Delete this saved invoice? This cannot be undone."))return;recSaveAll(recList().filter(r=>r.rid!==rid));renderHistory();renderCustomers();}
